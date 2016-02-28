@@ -271,7 +271,7 @@ leveldb/libleveldb.a:
 	@echo "Building LevelDB ..."; cd leveldb; make libleveldb.a libmemenv.a; cd ..;
 obj/txdb-leveldb.o: leveldb/libleveldb.a
 
-LIBS += $(CURDIR)/secp256k1/lib/libsecp256k1.a /usr/local/lib/libgmp.a
+#LIBS += $(CURDIR)/secp256k1/lib/libsecp256k1.a /usr/local/lib/libgmp.a
 
 
 # auto-generated dependencies:
