@@ -576,6 +576,19 @@ SECP256K1_API SECP256K1_WARN_UNUSED_RESULT int secp256k1_ec_pubkey_combine(
     size_t n
 ) SECP256K1_ARG_NONNULL(2) SECP256K1_ARG_NONNULL(3);
 
+/** Map a 32 bit hash to secp256k1 using try-and-increment
+ *  Returns: 1: the map succeeded
+ *           0: the map failed
+ *  Out:     b32_x:  pointer to big-endian 32 byte data of the x component of the ec point
+ *           b32_y:  pointer to big-endian 32 byte data of the y component of the ec point
+ *  In:      pcHash: pointer to byte data of the hash (32 bytes wide)
+ */
+SECP256K1_API int secp256k1_hash_to_ec_xy_bytes(
+    unsigned char* b32_x,
+    unsigned char* b32_y,
+    unsigned char* pcHash
+) SECP256K1_ARG_NONNULL(1) SECP256K1_ARG_NONNULL(2) SECP256K1_ARG_NONNULL(3);
+
 # ifdef __cplusplus
 }
 # endif

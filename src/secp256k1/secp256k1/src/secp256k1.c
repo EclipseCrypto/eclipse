@@ -1,5 +1,6 @@
 /**********************************************************************
  * Copyright (c) 2013-2015 Pieter Wuille                              *
+ * Copyright (c) 2016 The Eclipse Developers                          *
  * Distributed under the MIT software license, see the accompanying   *
  * file COPYING or http://www.opensource.org/licenses/mit-license.php.*
  **********************************************************************/
@@ -551,6 +552,60 @@ int secp256k1_ec_pubkey_combine(const secp256k1_context* ctx, secp256k1_pubkey *
     secp256k1_ge_set_gej(&Q, &Qj);
     secp256k1_pubkey_save(pubnonce, &Q);
     return 1;
+}
+
+int secp256k1_hash_to_ec_xy_bytes(unsigned char* b32_x, unsigned char* b32_y, unsigned char* pcHash) {
+
+    secp256k1_fe u, x, i;
+    secp256k1_ge Q;
+    secp256k1_ge_storage stor;
+    secp256k1_fe fe_x, fe_y;
+
+    int j;
+
+    int k = 1024;
+    int success = 0;
+
+    if (!secp256k1_fe_set_b32(&u, pcHash))
+        return 0;
+
+    /* key owner has got to be an unlucky bastard */
+
+    for (j = 0; j < k; ++j)
+    {
+        if (j == 0)
+            x = u;
+        else
+        {
+            secp256k1_fe_set_int(&i, j);
+            secp256k1_fe_add(&x, &i);
+        }
+        if (secp256k1_ge_set_xquad_var(&Q, &x))
+        {
+            success = 1;
+            break;
+        }
+    }
+
+    if (success == 0)
+        return 0;
+
+     /*
+      * convert Q to xy bytes
+      *
+      * necessary until BTC secp256k1 is fully integrated
+      * Q -> ge storage -> fe storage -> fe -> 32 byte be -> BIGNUM -> set affine
+      *
+      * This should probably should be a separate function.
+      *
+      */
+      secp256k1_ge_to_storage(&stor, &Q);
+      secp256k1_fe_from_storage(&fe_x, &(stor.x));
+      secp256k1_fe_from_storage(&fe_y, &(stor.y));
+      secp256k1_fe_get_b32(b32_x, &fe_x);
+      secp256k1_fe_get_b32(b32_y, &fe_y);
+
+      return 1;
 }
 
 #ifdef ENABLE_MODULE_ECDH
