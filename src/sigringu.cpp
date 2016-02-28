@@ -147,8 +147,7 @@ static int hashToEC(const uint8_t *p, uint32_t len, BIGNUM *bnTmp, EC_POINT *ptR
     unsigned char b32_x[32];
     unsigned char b32_y[32];
 
-    if (!secp256k1_hash_to_ec_xy_bytes(b32_x, b32_y, pcHash))
-        return 1;
+    
 
     BIGNUM* bn_x = BN_bin2bn(b32_x, 32, NULL);
     BIGNUM* bn_y = BN_bin2bn(b32_y, 32, NULL);
